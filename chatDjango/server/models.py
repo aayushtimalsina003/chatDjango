@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
+from .validators import validate_icon_image_size, validate_image_file_extensions
 
 def server_icon_upload_path(instance, filename):
     return f"server{instance.id}/server_icon/{filename}"
@@ -14,7 +15,7 @@ def category_icon_upload_path(instance, filename):
     return f"category/{instance.id}/category_icon/{filename}"
     
 
-class Category(models.Model):
+class Category(models.Model): 
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     icon = models.FileField(
@@ -73,8 +74,17 @@ class Channel(models.Model):
         on_delete=models.CASCADE,
         related_name='channel_server'
     )
-    banner = models.ImageField(upload_to=server_banner_upload_path, null=True,blank=True )
-    icon = models.ImageField(upload_to=server_icon_upload_path, null=True,blank=True )
+    banner = models.ImageField(
+        upload_to=server_banner_upload_path,
+        null=True,
+        blank=True 
+        validators=[validate_image_file_extensions], 
+        )
+    icon = models.ImageField(
+        upload_to=server_icon_upload_path,
+          null=True,blank=True, 
+          validators=[validate_icon_image_size, validate_image_file_extensions],
+        )
     
     def save(self, *args, **kwargs):
         if self.id:
