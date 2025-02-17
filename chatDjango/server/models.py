@@ -75,11 +75,11 @@ class Channel(models.Model):
         related_name='channel_server'
     )
     banner = models.ImageField(
-        upload_to=server_banner_upload_path,
-        null=True,
-        blank=True 
-        validators=[validate_image_file_extensions], 
-        )
+            upload_to=server_banner_upload_path,
+            null=True,
+            blank=True,
+            validators=[validate_image_file_extensions], 
+            )
     icon = models.ImageField(
         upload_to=server_icon_upload_path,
           null=True,blank=True, 
