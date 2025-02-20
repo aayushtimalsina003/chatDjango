@@ -2,6 +2,7 @@ from django.db.models import Count
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 
 from .schema import server_list_docs
 from .models import Server
@@ -9,6 +10,7 @@ from .serializer import ServerSerializer
 
 class ServerListViewSet(viewsets.ViewSet):
     queryset = Server.objects.all()
+    # permission_classes = [IsAuthenticated]
 
     @server_list_docs
     def list(self, request):
@@ -39,7 +41,7 @@ class ServerListViewSet(viewsets.ViewSet):
         GET /api/servers/?category=gaming&qty=5&with_num_members=true
     """
         category = request.query_params.get("category")
-        qty = request.query_params.get("qty")
+        qty = request.query_params.get("qty") 
         by_user = request.query_params.get("by_user") == "true"
         by_serverid = request.query_params.get("by_serverid")
         with_num_members = request.query_params.get("with_num_members") == "true"
