@@ -1,18 +1,16 @@
 import {
+  Avatar,
+  Box,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Box,
   Typography,
 } from "@mui/material";
-import useCrud from "../../hooks/useCrud";
-import { useEffect } from "react";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import { MEDIA_URL } from "../../config";
 import { Link } from "react-router-dom";
+import { MEDIA_URL } from "../../config";
 
 interface Server {
   id: number;
@@ -21,20 +19,15 @@ interface Server {
   icon: string;
 }
 
+interface ServerChannelsProps {
+  data: Server[];
+}
+
 type Props = {
   open: boolean;
 };
 
-const PopularChannels: React.FC<Props> = ({ open }) => {
-  const { dataCRUD, error, isLoading, fetchData } = useCrud<Server>(
-    [],
-    "/server/select/"
-  );
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+const UserServers = ({ open, data }: Props & ServerChannelsProps) => {
   return (
     <>
       <Box
@@ -47,11 +40,11 @@ const PopularChannels: React.FC<Props> = ({ open }) => {
         }}
       >
         <Typography sx={{ display: open ? "block" : "none" }}>
-          Popular
+          Servers
         </Typography>
       </Box>
       <List>
-        {dataCRUD.map((item) => (
+        {data.map((item) => (
           <ListItem
             key={item.id}
             disablePadding
@@ -66,7 +59,7 @@ const PopularChannels: React.FC<Props> = ({ open }) => {
                 <ListItemIcon sx={{ minWidth: 0, justifyContent: "center" }}>
                   <ListItemAvatar sx={{ minWidth: "50px" }}>
                     <Avatar
-                      alt="Server Icon"
+                      alt="Srever Icon"
                       src={`${MEDIA_URL}${item.icon}`}
                     />
                   </ListItemAvatar>
@@ -80,7 +73,7 @@ const PopularChannels: React.FC<Props> = ({ open }) => {
                         lineHeight: 1.2,
                         textOverflow: "ellipsis",
                         overflow: "hidden",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "noWrap",
                       }}
                     >
                       {item.name}
@@ -117,4 +110,5 @@ const PopularChannels: React.FC<Props> = ({ open }) => {
     </>
   );
 };
-export default PopularChannels;
+
+export default UserServers;
