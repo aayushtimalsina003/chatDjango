@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import useAxiosWithInterceptor from "../helpers/jwtinterceptor";
 import { BASE_URL } from "../config";
+import { useState } from "react";
 
 interface IuseCrud<T> {
   dataCRUD: T[];
@@ -9,35 +9,30 @@ interface IuseCrud<T> {
   isLoading: boolean;
 }
 
-const useCrud = <T>(initialData: T[], apiURL: string): IuseCrud<T> => {
+const useCrud = <T>(initalData: T[], apiURL: string): IuseCrud<T> => {
   const jwtAxios = useAxiosWithInterceptor();
-  const [dataCRUD, setDataCRUD] = useState<T[]>(initialData);
+  const [dataCRUD, setDataCRUD] = useState<T[]>(initalData);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await jwtAxios.get(`${BASE_URL}${apiURL}`);
+      const response = await jwtAxios.get(`${BASE_URL}${apiURL}`, {});
       const data = response.data;
       setDataCRUD(data);
       setError(null);
+      setIsLoading(false);
+      return data;
     } catch (error: any) {
-      console.log(error);
-      if (error.response?.status === 400) {
+      if (error.response && error.response.status === 400) {
         setError(new Error("400"));
       }
-    } finally {
       setIsLoading(false);
+      throw error;
     }
   };
 
-  // Automatically fetch data when hook is used
-  useEffect(() => {
-    fetchData();
-  }, []); // Fetch data once when component mounts
-
   return { fetchData, dataCRUD, error, isLoading };
 };
-
 export default useCrud;
