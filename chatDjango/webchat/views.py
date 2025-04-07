@@ -1,10 +1,14 @@
-from django.shortcuts import render
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets
 from rest_framework.response import Response
 
 from .schemas import list_message_docs
 from .models import Conversation
 from .serializer import MessageSerializer
+
+@extend_schema_view(
+    list=extend_schema(tags=["Messages"]) 
+)
 
 class MessageViewSet(viewsets.ViewSet):
     @list_message_docs
