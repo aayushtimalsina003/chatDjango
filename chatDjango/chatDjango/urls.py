@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 from server.views import ServerListViewSet, CategoryListViewSet
 from webchat.consumer import WebChatConsumer
 from webchat.views import MessageViewSet
+from account.views import AccountViewSet
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -17,6 +18,7 @@ router = DefaultRouter()
 router.register("api/server/select", ServerListViewSet)
 router.register("api/server/category", CategoryListViewSet)
 router.register("api/messages", MessageViewSet, basename="message")
+router.register("api/account", AccountViewSet, basename="account")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
