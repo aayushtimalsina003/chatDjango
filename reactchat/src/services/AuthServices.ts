@@ -1,14 +1,20 @@
 import axios from "axios";
 import { AuthServiceProps } from "../@types/auth-service";
+import { useState } from "react";
 
 export function useAuthService(): AuthServiceProps {
+  const getInitialLoggedInValue = () => {
+    const loggedIn = localStorage.getItem("isLoggedIn");
+    return loggedIn !== null && loggedIn === "true";
+  };
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    getInitialLoggedInValue
+  );
+
   const getUserDetails = async () => {
     try {
       const userId = localStorage.getItem("userId");
       const accessToken = localStorage.getItem("access_token");
-
-      console.log(">>>>>>>>");
-      console.log(accessToken);
 
       const response = await axios.get(
         `http://127.0.0.1:8000/api/account/?user_id=${userId}`,
@@ -20,7 +26,11 @@ export function useAuthService(): AuthServiceProps {
       );
       const userDetails = response.data;
       localStorage.setItem("username", userDetails.username);
+      setIsLoggedIn(true);
+      localStorage.setItem("isLoggedIn", "true");
     } catch (error: any) {
+      setIsLoggedIn(false);
+      localStorage.setItem("isLoggedIn", "false");
       return error;
     }
   };
@@ -50,11 +60,23 @@ export function useAuthService(): AuthServiceProps {
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("userId", getUserIdFromToken(access));
+      localStorage.setItem("isLoggedIn", "true");
+      setIsLoggedIn(true);
 
       getUserDetails();
     } catch (err: any) {
-      return err;
+      return err.response.status;
     }
   };
-  return { login };
+
+  const logout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    localStorage.setItem("isLoggedIn", "false");
+    setIsLoggedIn(false);
+  };
+
+  return { login, isLoggedIn, logout };
 }
